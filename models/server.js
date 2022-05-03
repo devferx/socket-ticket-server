@@ -16,25 +16,29 @@ class Server {
 
     // Configuraciones de sockets
     this.io = socketio(this.server, {
-      /*configuraciones*/
+      cors: {
+        origin: "*",
+      },
     });
-  }
 
-  configurarSockets() {
-    new Sockets(this.io);
+    this.sockets = new Sockets(this.io);
   }
 
   middlewares() {
     // Desplegar el directorio publico
     this.app.use(express.static(path.resolve(__dirname, "../public")));
     this.app.use(cors());
+    this.app.get("/last", (req, res) => {
+      res.json({
+        ok: true,
+        last: this.sockets.ticketList.last13,
+      });
+    });
   }
 
   execute() {
     // Inicializar Middlewares
     this.middlewares();
-
-    this.configurarSockets();
 
     this.server.listen(this.port, () => {
       console.log(`Server running on http://localhost:${this.port}`);
