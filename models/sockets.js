@@ -18,6 +18,8 @@ class Sockets {
       socket.on("next-ticket-to-attend", ({ agent, desk }, cb) => {
         const nextTicket = this.ticketList.assignTicket(agent, desk);
         cb(nextTicket);
+
+        this.io.emit("assigned-tickets", this.ticketList.last13);
       });
     });
   }
